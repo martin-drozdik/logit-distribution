@@ -1,0 +1,20 @@
+html {
+    background: orange
+}
+
+body {
+    width: 960px;
+    margin: auto;
+}
+
+#graph {
+    margin: auto;
+    width: 720px;
+    height: 600px;
+}
+
+#start {
+    margin: auto;
+    width: 720px;
+    display: block;
+}
