@@ -73,7 +73,7 @@ function create_data(xvec, yvec, rho)
         let line = [];
         for (let j = 0; j < xvec.length; ++j)
         {
-            line.push(logit_gaussian_bivariate_density(xvec[j], yvec[i], 0, 0, rho, 1, 1))
+            line.push(gaussian_bivariate_density(xvec[j], yvec[i], 0, 0, rho, 1, 1))
         }
         result.push(line);
     }
