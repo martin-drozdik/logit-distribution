@@ -94,8 +94,8 @@ function update_plot(rho)
         y: [y],
         z: [z],
         type: type,
-        contours: {'coloring':'heatmap', 'showlines':false},
-        line: {'color':'rgba(0,0,0)'},
+        contours: {'coloring':'heatmap'},
+        line: {'color':'rgba(0,0,0, 0.0)'},
         colorscale: "Electric"
     });
 }
