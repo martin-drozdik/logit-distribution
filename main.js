@@ -43,10 +43,11 @@ function logit_gaussian_bivariate_density(x, y, mx, my, rho, sx, sy)
 
 function gaussian_bivariate_density(x, y, mx, my, rho, sx, sy)
 {
-    let scaling_factor = 1 / (2*Math.PI*sx*sy*Math.sqrt(1 - square(rho)));
+    let r = rho / (sx * sy);
+    let scaling_factor = 1 / (2*Math.PI*sx*sy*Math.sqrt(1 - square(r)));
     let nx = (x - mx)/sx;
     let ny = (y - my)/sy;
-    let exponent = (-1 / (2*(1 - square(rho)))) * (square(nx) + square(ny) -rho*nx*ny);
+    let exponent = (-1 / (2*(1 - square(r)))) * (square(nx) + square(ny) -r*nx*ny);
     return scaling_factor * Math.exp(exponent);
 }
 
@@ -65,7 +66,7 @@ function linspace(min, max, nsteps)
 
 
 
-function create_data(xvec, yvec, rho)
+function create_data(xvec, yvec, f)
 {
     let result = [];
     for (let i = 0; i < yvec.length; ++i)
@@ -73,7 +74,7 @@ function create_data(xvec, yvec, rho)
         let line = [];
         for (let j = 0; j < xvec.length; ++j)
         {
-            line.push(gaussian_bivariate_density(xvec[j], yvec[i], 0, 0, rho, 1, 1))
+            line.push(f(xvec[j], yvec[i]))
         }
         result.push(line);
     }
@@ -82,40 +83,118 @@ function create_data(xvec, yvec, rho)
 
 
 
-function update_plot(rho)
+
+
+function update_plot(min, max, f, name)
 {
-    let x = linspace(0, 1, 100);
-    let y = linspace(0, 1, 100);
-    let z = create_data(x, y, rho);
+    let rho = r * s1 * s2;
+    let x = linspace(min, max, 100);
+    let y = linspace(min, max, 100);
+    let z = create_data(x, y, f);
     let type = 'contour';
-    Plotly.restyle('graph', 
+    Plotly.restyle(name, 
     {
         x: [x],
         y: [y],
         z: [z],
-        type: type,
-        contours: {'coloring':'heatmap'},
-        line: {'color':'rgba(0,0,0, 0.0)'},
+        type: 'surface',
+       // type: 'heatmap', zsmooth: 'best',
+        line: {'color':'rgba(0,0,0)'},
         colorscale: "Electric"
     });
 }
 
 
 
+function compute_dirichlet(x, y, a1, a2, a3)
+{
+    let barycentric = convert_to_barycentric(x, y);
+    let epsilon = 1e-6;
+    function out_of_bounds(a){ return a < epsilon || a > 1 - epsilon; } 
+    if (out_of_bounds(barycentric.a) || out_of_bounds(barycentric.b) || out_of_bounds(barycentric.c))
+        return null;
+
+    let factor = gamma(a1+a2+a3) / (gamma(a1)*gamma(a2)*gamma(a3));
+
+    return factor * Math.pow(barycentric.a, a1 - 1)*Math.pow(barycentric.b, a2 - 1)*Math.pow(barycentric.c, a3 - 1) 
+}
+
+
+
 window.onload = () => 
 {
-    var slider = document.getElementById("start");
+    var r = document.getElementById("r");
+    var mi1 = document.getElementById("mi1");
+    var mi2 = document.getElementById("mi2");
+    var s1 = document.getElementById("s1");
+    var s2 = document.getElementById("s2");
 
-    slider.oninput = function()
+
+    var a1 = document.getElementById("a1");
+    var a2 = document.getElementById("a2");
+    var a3 = document.getElementById("a3");
+
+    function update_both_plots()
     {
-        update_plot(this.value/10)
+        update_plot(0, 1, (x,y) => logit_gaussian_bivariate_density(x,y, parseFloat(mi1.value), mi2.value, r.value, s1.value, s2.value), "graph-logit")
+        update_plot(-5, 5, (x,y) => gaussian_bivariate_density(x, y,  mi1.value, mi2.value, r.value, s1.value, s2.value), "graph-normal")
+        update_plot(0, 1, (x, y) => compute_dirichlet(x, y, parseFloat(a1.value), parseFloat(a2.value), parseFloat(a3.value)), "graph-dirichlet")
+    }
+
+    a1.oninput = function()
+    {
+        update_both_plots();
+        document.getElementById("a1_output").value = this.value;
+    }
+
+    a2.oninput = function()
+    {
+        update_both_plots();
+        document.getElementById("a2_output").value = this.value;
+    }
+
+    a3.oninput = function()
+    {
+        update_both_plots();
+        document.getElementById("a3_output").value = this.value;
+    }
+
+    r.oninput = function()
+    {
+        update_both_plots();
+        document.getElementById("r_output").value = this.value;
+    };
+
+    mi1.oninput = function()
+    {       
+        update_both_plots();
+        document.getElementById("mi1_output").value = this.value;
+    };
+
+    mi2.oninput = function()
+    {       
+        update_both_plots();
+        document.getElementById("mi2_output").value = this.value;
+    };
+
+    s1.oninput = function()
+    {       
+        update_both_plots();
+        document.getElementById("s1_output").value = this.value;
+    };
+
+    s2.oninput = function()
+    {       
+        update_both_plots();
+        document.getElementById("s2_output").value = this.value;
     };
     
 
     let x = linspace(0, 1, 100);
     let y = linspace(0, 1, 100);
-    let z = create_data(x, y, 0);
+    let z = create_data(x, y, (x,y) => logit_gaussian_bivariate_density(x, y, 0, 0, 0, 1, 1));
     let type = 'contour';
-    Plotly.newPlot('graph', [{x, y, z, type}]);
-    update_plot(0.5);
+    Plotly.newPlot('graph-normal', [{x, y, z, type}]);
+    Plotly.newPlot('graph-logit', [{x, y, z, type}]);
+    Plotly.newPlot('graph-dirichlet', [{x, y, z, type}]);
 };

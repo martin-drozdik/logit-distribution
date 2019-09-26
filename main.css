@@ -1,15 +1,17 @@
 html {
-    background: orange
+    background: lightblue;
 }
 
 body {
-    width: 960px;
+    width: 80%;
     margin: auto;
+    text-align: center;
 }
 
-#graph {
+#graph-normal, #graph-logit, #graph-dirichlet {
     margin: auto;
-    width: 720px;
+    display: inline-block;
+    width: 600px;
     height: 600px;
 }
 
@@ -17,4 +19,15 @@ body {
     margin: auto;
     width: 720px;
     display: block;
+}
+
+input {
+    display: inline-block;
+    margin: auto;
+    width: 80%;
+}
+
+output {
+    width: 40px;
+    border: 1px;
 }
