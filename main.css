@@ -8,7 +8,7 @@ body {
     text-align: center;
 }
 
-#graph-normal, #graph-logit, #graph-dirichlet {
+.graph {
     margin: auto;
     display: inline-block;
     width: 600px;
@@ -27,7 +27,8 @@ input {
     width: 80%;
 }
 
-output {
+.display {
+    display: inline-block;
     width: 40px;
     border: 1px;
 }

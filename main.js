@@ -98,8 +98,8 @@ function update_plot(min, max, f, name)
         y: [y],
         z: [z],
         type: 'surface',
-       // type: 'heatmap', zsmooth: 'best',
-        line: {'color':'rgba(0,0,0)'},
+        type: 'heatmap', zsmooth: 'best',
+       // line: {'color':'rgba(0,0,0)'},
         colorscale: "Electric"
     });
 }
@@ -117,6 +117,13 @@ function compute_dirichlet(x, y, a1, a2, a3)
     let factor = gamma(a1+a2+a3) / (gamma(a1)*gamma(a2)*gamma(a3));
 
     return factor * Math.pow(barycentric.a, a1 - 1)*Math.pow(barycentric.b, a2 - 1)*Math.pow(barycentric.c, a3 - 1) 
+}
+
+
+
+function compute_dirichlet_ratio(x, y, a1, a2, a3)
+{
+    return compute_dirichlet(x, y, a1, a2, a3) / compute_dirichlet(x, y, a3, a1, a2)
 }
 
 
@@ -139,6 +146,7 @@ window.onload = () =>
         update_plot(0, 1, (x,y) => logit_gaussian_bivariate_density(x,y, parseFloat(mi1.value), mi2.value, r.value, s1.value, s2.value), "graph-logit")
         update_plot(-5, 5, (x,y) => gaussian_bivariate_density(x, y,  mi1.value, mi2.value, r.value, s1.value, s2.value), "graph-normal")
         update_plot(0, 1, (x, y) => compute_dirichlet(x, y, parseFloat(a1.value), parseFloat(a2.value), parseFloat(a3.value)), "graph-dirichlet")
+        update_plot(0, 1, (x, y) => compute_dirichlet_ratio(x, y, parseFloat(a1.value), parseFloat(a2.value), parseFloat(a3.value)), "graph-dirichlet-ratio")
     }
 
     a1.oninput = function()
@@ -197,4 +205,5 @@ window.onload = () =>
     Plotly.newPlot('graph-normal', [{x, y, z, type}]);
     Plotly.newPlot('graph-logit', [{x, y, z, type}]);
     Plotly.newPlot('graph-dirichlet', [{x, y, z, type}]);
+    Plotly.newPlot('graph-dirichlet-ratio', [{x, y, z, type}]);
 };
