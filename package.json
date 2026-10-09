@@ -1,0 +1,27 @@
+{
+  "name": "logit-distribution",
+  "version": "1.0.0",
+  "description": "Draws the density function of the logit distribution in barycentric coordinates",
+  "homepage": "https://github.com/martin-drozdik/logit-distribution#readme",
+  "bugs": {
+    "url": "https://github.com/martin-drozdik/logit-distribution/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martin-drozdik/logit-distribution.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",  
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "electron": "^44.4.0"
+  },
+  "dependencies": {
+    "plotly.js-dist": "^4.1.1"
+  }
+}
